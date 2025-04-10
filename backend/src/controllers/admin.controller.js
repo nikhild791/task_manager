@@ -73,7 +73,6 @@ export async function createUser(req,res) {
         return alphaNum[Math.floor(Math.random()*alphaNum.length)]
     }).join('')
     try{
-
        const res =  await prisma.user.create({
             data:{
                 username,

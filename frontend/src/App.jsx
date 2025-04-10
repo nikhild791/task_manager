@@ -9,10 +9,16 @@ import Signin from './pages/Signin'
 import Signup from './pages/Signup'
 import Pricing from './pages/Pricing'
 import Features from './pages/Features'
+import Dashboard from './components/Main/Dashboard'
+import { AuthProvider } from './contexts/AuthContext'
+import ProtectedRoute from './layouts/ProtectedRoute'
+import { TaskProvider } from './contexts/TaskContext'
 
 function App() {
 
   return (
+    <AuthProvider>  
+      <TaskProvider>
     <Routes>
     <Route path="/" element={<Layout/>} >
     <Route index element={<Home/>} />
@@ -23,7 +29,21 @@ function App() {
     <Route path='/signin' element={<Signin/>} />
     <Route path='/signup' element={<Signup/>} />
     </Route>
+
+    <Route path="/main" element={<ProtectedRoute/>} >
+    <Route index element={<Home/>} />
+
+    <Route path='/main/dashboard' element={<Dashboard/>} />
+    {/* <Route path='/main/contact' element={<Contact/>} />
+    <Route path='/main/pricing' element={<Pricing/>} />
+    <Route path='/features' element={<Features/>} />
+    <Route path='/signin' element={<Signin/>} />
+    <Route path='/signup' element={<Signup/>} /> */}
+    </Route>
+
     </Routes>
+    </TaskProvider> 
+    </AuthProvider>
   )
 }
 
