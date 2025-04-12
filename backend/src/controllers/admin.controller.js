@@ -2,7 +2,10 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { admin_secret_token } from "../config.js";
+
+
 const prisma = new PrismaClient()
+
 
 //@ admin kalesh
 
@@ -295,3 +298,4 @@ export async function expelTask(req,res) {
 res.status(200).json({success:true, msg:"user expelled from task successfully"})
 
 }
+

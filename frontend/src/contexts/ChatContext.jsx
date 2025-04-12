@@ -1,83 +1,90 @@
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect,useRef } from "react";
 import { useAuth} from "./AuthContext";
-
+import { authService, userService } from "../api/admin";
 
 const ChatContext = createContext();
 
-const admin = {
-  id: "1",
-  name: "Admin User",
-  email: "admin@example.com",
-  role: "admin" ,
-  avatarUrl: "https://api.dicebear.com/7.x/personas/svg?seed=admin"
-};
 
-const user = {
-  id: "2",
-  name: "Test User",
-  email: "user@example.com",
-  role: "user" ,
-  avatarUrl: "https://api.dicebear.com/7.x/personas/svg?seed=user"
-};
-
-// Mock initial messages
-const INITIAL_MESSAGES = [
-  {
-    id: "1",
-    text: "Welcome to the Task Trophy Hub team chat!",
-    sender: admin,
-    timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
-  },
-  {
-    id: "2",
-    text: "Thanks! I'm excited to get started on my tasks.",
-    sender: user,
-    timestamp: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000 + 5 * 60 * 1000).toISOString()
-  },
-  {
-    id: "3",
-    text: "I've assigned you some initial tasks. Let me know if you have questions!",
-    sender: admin,
-    timestamp: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000).toISOString()
-  },
-  {
-    id: "4",
-    text: "The login page is now complete. Moving on to the dashboard design.",
-    sender: user,
-    timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
-  }
-];
 
 export const ChatProvider = ({ children }) => {
-  const { currentUser } = useAuth();
-  const [messages, setMessages] = useState(INITIAL_MESSAGES);
+  const socketRef = useRef(null);
+  const { currentUser, role } = useAuth();
+  const [messages, setMessages] = useState([]);
+  const [roomId,setRoomId] = useState()
 
+  // Step 1: Fetch adminId first
   useEffect(() => {
-    // In a real app, we would fetch messages from an API
-    // For now, we'll use our mock data
-    const savedMessages = localStorage.getItem("taskTrophyMessages");
-    
-    if (savedMessages) {
-      try {
-        setMessages(JSON.parse(savedMessages));
-      } catch (error) {
-        console.error("Failed to parse saved messages:", error);
+    const fetchAdminIdAndConnect = async () => {
+      let res;
+      if (role === 'admin') {
+        res = await authService.adminProfile();
+        setRoomId(res.admin.id)
+        connectWebSocket(res.admin.id);
+      } else {
+        res = await userService.userProfile();
+        setRoomId(res.user.adminId)
+        connectWebSocket(res.user.adminId);
       }
-    }
-  }, []);
+    };
 
-  // Save messages to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem("taskTrophyMessages", JSON.stringify(messages));
-  }, [messages]);
+    fetchAdminIdAndConnect();
 
-  const sendMessage = (text) => {
-    if (!currentUser || !text.trim()) return;
+    return () => {
+      if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+        socketRef.current.close();
+      }
+    };
+  }, [role]);
 
+  const connectWebSocket = (roomId) => {
+    socketRef.current = new WebSocket('ws://localhost:8080');
+
+    socketRef.current.onopen = () => {
+      console.log('WebSocket connected');
+      socketRef.current.send(
+        JSON.stringify({
+          type: 'join',
+          roomId: roomId
+        })
+      );
+    };
+
+    socketRef.current.onmessage = (event) => {
+      const data = JSON.parse(event.data)
+     
+      if(data.type === 'message'){
+        setMessages(prev => [...prev, data.message]);
+      }
+    };
+
+    socketRef.current.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+  };
+
+
+
+  
+    const sendMessage = (text) => {
+      if (!currentUser || !text.trim()) return;
+      if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+        socketRef.current.send(
+          JSON.stringify({
+            type: 'chat',
+            roomId: roomId,
+            message:text,
+            sender:currentUser
+          })
+        );
+      } else {
+        console.warn('WebSocket is not open.');
+      }
+    
     const newMessage = {
+      type: 'chat',
       id: Date.now().toString(),
-      text: text.trim(),
+      message: text.trim(),
       sender: currentUser,
       timestamp: new Date().toISOString()
     };

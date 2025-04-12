@@ -85,36 +85,6 @@ export const AuthProvider = ({ children }) => {
     setIsLoading(false);
   };
 
-  const register = async (name, email, password) => {
-    setIsLoading(true);
-    
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Check if email is already in use
-    if (MOCK_USERS.some(u => u.email === email)) {
-      toast.error("Email already in use");
-      setIsLoading(false);
-      throw new Error("Email already in use");
-    }
-    
-    // In a real app, you would send this to an API
-    // For now, we'll just simulate a successful registration
-    const newUser = {
-      id: `${MOCK_USERS.length + 1}`,
-      name,
-      email,
-      role: "user",
-      avatarUrl: `https://api.dicebear.com/7.x/personas/svg?seed=${email}`
-    };
-    
-    setCurrentUser(newUser);
-    localStorage.setItem("taskTrophyUser", JSON.stringify(newUser));
-    toast.success("Registration successful!");
-    
-    setIsLoading(false);
-  };
-
   const logout = () => {
     localStorage.removeItem("token");
     setCurrentUser(null);
@@ -138,7 +108,6 @@ export const AuthProvider = ({ children }) => {
         isLoading,
         userLogin,
         login,
-        register,
         logout
       }}
     >
