@@ -1,10 +1,10 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "sonner";
+import { authService, userService } from "../api/admin";
 
 
 const AuthContext = createContext();
-
 // Mock user database
 const MOCK_USERS = [
   {
@@ -27,36 +27,55 @@ const MOCK_USERS = [
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
+  const [role,setRole] = useState()
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check for saved user in localStorage
-    const savedUser = localStorage.getItem("taskTrophyUser");
+    const savedUser = localStorage.getItem("user");
+    const savedRole = localStorage.getItem("role")
     
     if (savedUser) {
       try {
-        setCurrentUser(JSON.parse(savedUser));
+        setCurrentUser(savedUser);
+        setRole(savedRole)
       } catch (error) {
         console.error("Failed to parse saved user:", error);
-        localStorage.removeItem("taskTrophyUser");
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        localStorage.removeItem("role");
       }
     }
     
     setIsLoading(false);
   }, []);
 
-  const login = async (email, password) => {
+  const login = async (token) => {
     setIsLoading(true);
+    if(token){
+       localStorage.setItem("token", `Bearer ${token}`);
+      const res = await authService.adminProfile()
+      setCurrentUser(res.admin.username);
+      setRole(res.role)
+      localStorage.setItem('user',res.admin.username)
+      localStorage.setItem('role',res.role)
+      toast.success("Login successful!");
+      
+    } else {
+      toast.error("Invalid email or password");
+      throw new Error("Invalid email or password");
+    }
     
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    const user = MOCK_USERS.find(u => u.email === email && u.password === password);
-    
-    if (user) {
-      const { password, ...userWithoutPassword } = user;
-      setCurrentUser(userWithoutPassword);
-      localStorage.setItem("taskTrophyUser", JSON.stringify(userWithoutPassword));
+    setIsLoading(false);
+  };
+  const userLogin = async (token) => {
+    setIsLoading(true);
+    if(token){
+       localStorage.setItem("token", `Bearer ${token}`);
+      const res = await userService.userProfile()
+      setCurrentUser(res.user.username);
+      setRole(res.role)
+      localStorage.setItem('user',res.user.username)
+      localStorage.setItem('role',res.role)
       toast.success("Login successful!");
     } else {
       toast.error("Invalid email or password");
@@ -97,8 +116,12 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem("taskTrophyUser");
+    localStorage.removeItem("token");
     setCurrentUser(null);
+    setCurrentUser(null);
+      setRole(null)
+      localStorage.removeItem('user')
+      localStorage.removeItem('role')
     toast.info("Logged out successfully");
   };
 
@@ -109,9 +132,11 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         currentUser,
+        role,
         isAuthenticated,
         isAdmin,
         isLoading,
+        userLogin,
         login,
         register,
         logout

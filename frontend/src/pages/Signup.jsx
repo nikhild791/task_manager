@@ -1,8 +1,38 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import AnimatedSection from '../components/AnimatedSection'
+import { authService } from '../api/admin'
+import { useAuth } from '../contexts/AuthContext'
 
 const Signup = () => {
+  const [credentials, setCredentials] = useState({
+    username: '',
+    email: '',
+    password: ''
+  })
+  const navigate = useNavigate()
+ const {currentUser} = useAuth()
+  useEffect(()=>{
+    if(currentUser){
+      navigate('/main')
+    }
+  },[navigate,currentUser])
+
+  const handleChange = (e) => {
+    const {name, value} = e.target
+    setCredentials(prev => ({
+      ...prev,
+      [name]: value
+    }))
+  }
+
+  const handleSubmit = async(e) => {
+    e.preventDefault()
+    const res = await authService.adminSignup(credentials)
+    if(res.status){
+      navigate('/signin')
+    }
+  }
   return (
     <div className="min-h-screen mt-8 bg-gray-50 dark:bg-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <AnimatedSection delay={0.1}>
@@ -20,13 +50,15 @@ const Signup = () => {
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white dark:bg-gray-800 py-8 px-4 shadow sm:rounded-lg sm:px-10">
-            <form className="space-y-6" action="#" method="POST">
+            <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                  Username
                 </label>
                 <div className="mt-1">
                   <input
+                  value={credentials.username}
+                  onChange={handleChange}
                     id="username"
                     name="username"
                     type="username"
@@ -43,6 +75,8 @@ const Signup = () => {
                 </label>
                 <div className="mt-1">
                   <input
+                value={credentials.email}
+                onChange={handleChange}
                     id="email"
                     name="email"
                     type="email"
@@ -60,6 +94,8 @@ const Signup = () => {
                 </label>
                 <div className="mt-1">
                   <input
+                    value={credentials.password}
+                    onChange={handleChange}
                     id="password"
                     name="password"
                     type="password"
@@ -96,7 +132,7 @@ const Signup = () => {
                   type="submit"
                   className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800"
                 >
-                  Sign in
+                  Sign up
                 </button>
               </div>
             </form>

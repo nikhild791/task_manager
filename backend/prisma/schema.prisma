@@ -23,26 +23,34 @@ model Admin {
 model Task {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  dueDate DateTime 
   title     String   @db.VarChar(255)
   description String 
   status Status @default(PENDING)
   level Level  @default(EASY)
+  priority Priority @default(LOW)
   admin    Admin   @relation(fields: [adminId], references: [id])
   adminId  Int
   user    User?   @relation(fields: [userId], references: [id])
   userId  Int?
 }
 
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
 
 enum Status {
   PENDING
   COMPLETED
+  WORKINPROGRESS
+  CANCELLED
 }
 
 enum Level {
   EASY
-  MEDIUM
+  AVERAGE
   HARD
 }
 

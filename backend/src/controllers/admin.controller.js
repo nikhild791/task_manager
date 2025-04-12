@@ -50,7 +50,7 @@ export async function adminProfile(req,res) {
         id:adminId
     }})
     const {password, ...adminWithoutPassword} = admin
-    res.status(200).json({success:true, msg:"user data",admin:adminWithoutPassword})
+    res.status(200).json({success:true, msg:"user data",admin:adminWithoutPassword,role:'admin'})
 } 
 
 //@ user kalesh
@@ -73,16 +73,16 @@ export async function createUser(req,res) {
         return alphaNum[Math.floor(Math.random()*alphaNum.length)]
     }).join('')
     try{
-       const res =  await prisma.user.create({
+     await prisma.user.create({
             data:{
                 username,
                 password:randomPassword,
                 admin: {
-                    connect: { id: adminId }
+                    connect: { id: parseInt(adminId) }
                   }
             }
         })
-        res.status(201).json({success:true, msg:"user created successfully",res})
+        return res.status(201).json({success:true, msg:"user created successfully"})
 
     }catch(e){
         return res.status(511).json({success:false,msg:"user cannot be created",e})
@@ -100,7 +100,7 @@ export async function showUser(req,res) {
         updatedAt:true,
     }})
 
-    return res.status(200).json({success:false, msg:"all the users",users})
+    return res.status(200).json({success:true, msg:"all the users",users})
 
 }
 
@@ -131,7 +131,7 @@ export async function deleteUser(req,res) {
 //@task kalesh
 export async function  createTask(req,res) {
     const adminId = req.adminId
-    const {title,description,status, level} = req.body;
+    const {title,description,status,priority,userId ,level} = req.body;
     const task = await prisma.task.findFirst({where:{
         title,
         adminId
@@ -147,7 +147,9 @@ export async function  createTask(req,res) {
                 description,
                 status,
                 level,
-               adminId
+               adminId,
+               priority,
+               userId:parseInt(userId)
             }
         })
         return res.status(201).json({success:true, msg:"task created successfully"})
@@ -163,7 +165,7 @@ export async function showTask(req,res) {
         adminId
     }})
 
-    return res.status(200).json({success:false, msg:"all the users",tasks})   
+    return res.status(200).json({success:true, msg:"all the users",tasks})   
 }
 
 export async function deleteTask(req,res) {
@@ -222,6 +224,51 @@ export async function assignTask(req,res) {
 res.status(200).json({success:true, msg:"task assigned successfully"})
 
 }
+
+export const updateTask=async (req,res) => {
+    const adminId = req.adminId
+    const {title,description,status,priority,userId ,level,taskId} = req.body;
+   
+    if(!taskId){
+        return res.status(404).json({success:false,msg:"No taskId found"})
+    }
+    if(!userId){
+        return res.status(404).json({success:false,msg:"No userId found"})
+    }
+    const task =await prisma.task.findFirst({where:{
+        id:taskId,
+    }})
+    if(!task){
+        return res.status(404).json({success:false,msg:"No task found"})
+    }
+    if(task.adminId != adminId){
+        return res.status(404).json({success:false,msg:"You don't have authority to assign this task"})
+    }
+   
+    try{
+
+        await prisma.task.update({
+            where:{
+                id:taskId
+            } ,
+            data: {
+                title,
+                description,
+                status,
+                level,
+               adminId,
+               priority,
+               userId:parseInt(userId)
+            }
+        })
+        return res.status(201).json({success:true, msg:"task updated successfully"})
+    }catch(e){
+        return res.status(511).json({success:false,msg:"task cannot be updated",e})
+    
+}
+
+}
+
 export async function expelTask(req,res) {
     const {taskId} = req.body
     const adminId = req.adminId

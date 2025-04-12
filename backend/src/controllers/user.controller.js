@@ -42,7 +42,7 @@ export async function userProfile(req,res){
     if(!user){
         return res.status(404).json({success:false, msg:"No user found"})
     }
-    return res.status(200).json({success:true, msg:"user details",user})
+    return res.status(200).json({success:true, msg:"user details",user,role:'user'})
 }
 export async function changeUserPassword(req,res){
     const userId = req.userId
@@ -106,5 +106,5 @@ export async function allTask(req,res){
             userId
         }
     })
-    return res.status(200).json({success:false, msg:"all the users",tasks})   
+    return res.status(200).json({success:true, msg:"all the users",tasks})   
 }

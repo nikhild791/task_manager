@@ -1,10 +1,8 @@
-import { SidebarProvider, Sidebar, SidebarContent, SidebarTrigger } from "../ui/MainSidebar";
-
-import { Link } from "react-router-dom"
+import { SidebarProvider, Sidebar, SidebarContent, SidebarTrigger, SidebarInset } from "../ui/sidebar";
+import { Link, useLocation } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-
-import React from 'react'
+import React from 'react';
 import { 
     Calendar, 
     List, 
@@ -12,124 +10,167 @@ import {
     User, 
     Bell, 
     LogOut,
-    Settings
-  } from "lucide-react";
+    Settings,
+    PanelLeft,
+    Search
+} from "lucide-react";
+import { useAuth } from "../../contexts/AuthContext";
 
 const MainLayout = ({children}) => {
-    const logout=()=>{
-        
-    }
+    const location = useLocation();
+    const {currentUser,role} = useAuth()
+    const {logout} = useAuth()
     const getInitials = (name) => {
         return name
           .split(" ")
           .map(part => part[0])
           .join("")
           .toUpperCase();
-      };
+    };
     
-    const currentUser = {
-        name:"Testuser"
-    }
-  const navigationItems = [
-    {
-      name: "Dashboard",
-      href: "/main/dashboard",
-      icon: List,
-      active: location.pathname === "/dashboard"
-    },
-    {
-      name: "Chat",
-      href: "/main/chat",
-      icon: MessageSquare,
-      active: location.pathname === "/chat"
-    },
-    {
-      name: "Achievements",
-      href: "/main/achievements",
-      icon: Bell,
-      active: location.pathname === "/achievements"
-    },
-    {
-      name: "Profile",
-      href: "/main/profile",
-      icon: User,
-      active: location.pathname === "/profile"
-    }
-  ];
 
-  return (
-    <div>
-         <div>
-      <div className="min-h-screen flex w-full">
-        <Sidebar className="bg-sidebar border-r border-border">
-          <div className="flex flex-col h-full">
-            <div className="p-4 border-b">
-              <Link to="/dashboard" className="flex items-center space-x-2">
-                <div className="bg-primary rounded-md w-8 h-8 flex items-center justify-center text-primary-foreground font-bold">
-                  TT
-                </div>
-                <span className="font-bold text-lg">Task Trophy</span>
-              </Link>
-            </div>
-          
-            <SidebarContent className="flex-1 py-4">
-              <nav className="px-2 space-y-1">
-                {navigationItems.map((item) => (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    className={`flex items-center px-3 py-2 rounded-md text-sm font-medium group transition-colors ${
-                      item.active
-                        ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                        : "text-sidebar-foreground hover:bg-sidebar-accent/50"
-                    }`}
-                  >
-                    <item.icon className="mr-3 h-5 w-5" />
-                    {item.name}
-                  </Link>
-                ))}
-              </nav>
-            </SidebarContent>
-            
-            <div className="p-4 border-t mt-auto">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <Avatar className="h-8 w-8 mr-2">
-                    <AvatarImage src={currentUser?.avatarUrl} alt={currentUser?.name} />
-                    <AvatarFallback>{currentUser ? getInitials(currentUser.name) : "U"}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="text-sm font-medium">{currentUser?.name}</p>
-                    <p className="text-xs text-muted-foreground">{currentUser?.role}</p>
-                  </div>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={logout}
-                  title="Sign Out"
-                >
-                  <LogOut className="h-5 w-5" />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </Sidebar>
-        
-        <div className="flex-1 flex flex-col min-h-screen">
-          <header className="h-16 px-4 border-b flex items-center justify-between bg-background">
-            <SidebarTrigger />
-            <div></div>
-          </header>
-          
-          <main className="flex-1 p-6 overflow-auto">
-            {children}
-          </main>
-        </div>
-      </div>
-    </div>
-    </div>
-  )
-}
 
-export default MainLayout
+    let navigationItems = [
+       
+        {
+            name: "Chat",
+            href: "/main/chat",
+            icon: MessageSquare,
+            active: location.pathname === "/main/chat"
+        },
+        {
+            name: "Achievements",
+            href: "/main/achievements",
+            icon: Bell,
+            active: location.pathname === "/main/achievements"
+        },
+        {
+            name: "Profile",
+            href: "/main/profile",
+            icon: User,
+            active: location.pathname === "/main/profile"
+        }
+    ];
+    if(role ==='admin'){
+        navigationItems = [  {
+            name: "Admin Dashboard",
+            href: "/main/admin-dashboard",
+            icon: List,
+            active: location.pathname === "/main/admin-dashboard"
+        },...navigationItems]
+    }else{
+        navigationItems = [   
+        {
+            name: "Dashboard",
+            href: "/main/dashboard",
+            icon: List,
+            active: location.pathname === "/main/dashboard"
+        },...navigationItems]
+
+    }
+
+    return (
+        <SidebarProvider defaultOpen={true}>
+            <div className="min-h-screen bg-gray-50 w-full dark:bg-gray-900 transition-colors duration-300">
+                <div className="flex flex-col md:flex-row">
+                    {/* Sidebar */}
+                    <Sidebar className="fixed inset-y-0 left-0 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+                        <div className="flex flex-col h-full">
+                            {/* Logo Section */}
+                            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                                <Link to="/main/dashboard" className="flex items-center space-x-2">
+                                    <div className="bg-gradient-to-br from-blue-600 to-indigo-600 dark:from-blue-500 dark:to-indigo-500 rounded-md w-8 h-8 flex items-center justify-center text-white font-bold shadow-sm">
+                                        Pd
+                                    </div>
+                                    <span className="font-bold text-lg text-gray-900 dark:text-white">Prabandhan</span>
+                                </Link>
+                            </div>
+                            
+                            {/* Navigation */}
+                            <SidebarContent className="flex-1 py-4">
+                                <nav className="px-2 space-y-1">
+                                    {navigationItems.map((item) => (
+                                        <Link
+                                            key={item.name}
+                                            to={item.href}
+                                            className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                                                item.active
+                                                    ? "bg-blue-50 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 shadow-sm"
+                                                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                            }`}
+                                        >
+                                            <item.icon className="mr-3 h-5 w-5" />
+                                            {item.name}
+                                        </Link>
+                                    ))}
+                                </nav>
+                            </SidebarContent>
+                            
+                            {/* User Profile Section */}
+                            <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center">
+                                        <Avatar className="h-8 w-8 mr-2">
+                                            <AvatarImage src={`https://api.dicebear.com/7.x/personas/svg?seed=${currentUser}`} alt={currentUser} />
+                                            <AvatarFallback className="bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400">
+                                                { getInitials(currentUser) }
+                                            </AvatarFallback>
+                                        </Avatar>
+                                        <div>
+                                            <p className="text-sm font-medium text-gray-900 dark:text-white">{currentUser}</p>
+                                            <p className="text-xs text-gray-500 dark:text-gray-400">{role}</p>
+                                        </div>
+                                    </div>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={()=>{logout()}}
+                                        title="Sign Out"
+                                        className="text-gray-500 cursor-pointer dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                                    >
+                                        <LogOut className="h-5 w-5" />
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    </Sidebar>
+                    
+                    {/* Main Content Area */}
+                    <SidebarInset className="flex-1 flex flex-col absolute left-64 w-[calc(100%-256px)]">
+                        {/* Header */}
+                        <header className="h-16 px-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between bg-white dark:bg-gray-800">
+                            <div className="flex items-center space-x-4">
+                                <SidebarTrigger className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200" />
+                                <div className="relative">
+                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                    <input
+                                        type="text"
+                                        placeholder="Search..."
+                                        className="pl-10 pr-4 py-2 rounded-md bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    />
+                                </div>
+                            </div>
+                            <div className="flex items-center space-x-4">
+                                <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
+                                    <Bell className="h-5 w-5" />
+                                </Button>
+                                <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
+                                    <Settings className="h-5 w-5" />
+                                </Button>
+                            </div>
+                        </header>
+                        
+                        {/* Main Content */}
+                        <main className="flex-1  p-6 overflow-auto bg-gray-50 dark:bg-gray-900">
+                            <div className=" mx-auto">
+                                {children}
+                            </div>
+                        </main>
+                    </SidebarInset>
+                </div>
+            </div>
+        </SidebarProvider>
+    );
+};
+
+export default MainLayout;

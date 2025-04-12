@@ -21,44 +21,37 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-// Mock users for assignment
-const mockUsers = [
-  {
-    id: "2",
-    name: "Test User",
-    email: "user@example.com",
-    role: "user" ,
-    avatarUrl: "https://api.dicebear.com/7.x/personas/svg?seed=user"
-  },
-  {
-    id: "3",
-    name: "Jane Doe",
-    email: "jane@example.com",
-    role: "user" ,
-    avatarUrl: "https://api.dicebear.com/7.x/personas/svg?seed=jane"
-  },
-  {
-    id: "4",
-    name: "John Smith",
-    email: "john@example.com",
-    role: "user" ,
-    avatarUrl: "https://api.dicebear.com/7.x/personas/svg?seed=john"
-  }
-];
-
+import { taskService } from "../../api/admin";
+import { useState,useEffect } from "react";
 
 
 const taskFormSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
   description: z.string().min(10, "Description must be at least 10 characters"),
-  assignedToId: z.string().min(1, "Please select a user"),
-  priority: z.enum(["low", "medium", "high"]),
+  userId: z.string().min(1, "Please select a user"),
+  priority: z.enum(["LOW", "MEDIUM", "HIGH"]),
+  level: z.enum(["EASY", "AVERAGE", "HARD"]),
   dueDate: z.string().min(1, "Please select a due date"),
 });
 
-
 const TaskForm = ({ onSubmit, initialData, isSubmitting }) => {
+  const [users,setUsers] = useState([])
+  const getAllUsers =async () =>{
+     try {
+      const res =await taskService.allUser()
+      if(res.success){
+        setUsers(res.users)
+      }
+        } catch (err) {
+          console.error('API Error:', err);
+        } 
+
+  }
+  useEffect(() => {
+    getAllUsers()
+  }, [])
+  
+
   const { currentUser } = useAuth();
   
   const form = useForm({
@@ -66,8 +59,9 @@ const TaskForm = ({ onSubmit, initialData, isSubmitting }) => {
     defaultValues: {
       title: initialData?.title || "",
       description: initialData?.description || "",
-      assignedToId: initialData?.assignedToId || "",
-      priority: initialData?.priority || "medium",
+      userId: initialData?.userId || "",
+      priority: initialData?.priority || "MEDIUM",
+      level: initialData?.level || "EASY",
       dueDate: initialData?.dueDate || new Date().toISOString().split("T")[0],
     },
   });
@@ -76,7 +70,6 @@ const TaskForm = ({ onSubmit, initialData, isSubmitting }) => {
     if (!currentUser) return;
     onSubmit(values);
   };
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
@@ -115,7 +108,7 @@ const TaskForm = ({ onSubmit, initialData, isSubmitting }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
-            name="assignedToId"
+            name="userId"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Assign To</FormLabel>
@@ -129,9 +122,9 @@ const TaskForm = ({ onSubmit, initialData, isSubmitting }) => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {mockUsers.map((user) => (
+                    {users.map((user) => (
                       <SelectItem key={user.id} value={user.id}>
-                        {user.name}
+                        {user.username}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -157,9 +150,34 @@ const TaskForm = ({ onSubmit, initialData, isSubmitting }) => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="low">Low</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="high">High</SelectItem>
+                    <SelectItem value="LOW">Low</SelectItem>
+                    <SelectItem value="MEDIUM">Medium</SelectItem>
+                    <SelectItem value="HIGH">High</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="level"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Level</FormLabel>
+                <Select 
+                  onValueChange={field.onChange} 
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select level" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="EASY">Easy</SelectItem>
+                    <SelectItem value="AVERAGE">Average</SelectItem>
+                    <SelectItem value="HARD">Hard</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
