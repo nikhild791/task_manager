@@ -120,12 +120,16 @@ export const userService = {
     const response = await api.post("/user/signin", credentials);
     return response.data;
   },
+  changePassword: async (credentials) => {
+    const response = await api.put("/user/change-password", credentials);
+    return response.data;
+  },
   userProfile: async () => {
     const response = await api.get("/user");
     return response.data;
   },
   updateTask: async (data) => {
-    const res = await api.get("/user/task", data);
+    const res = await api.put("/user/task", data);
     return res.data;
   },
   showTask: async () => {

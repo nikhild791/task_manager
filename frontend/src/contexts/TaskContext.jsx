@@ -72,7 +72,7 @@ export const TaskProvider = ({ children }) => {
         task.id === id 
           ? { 
               ...task, 
-              status: "completed",
+              status: "COMPLETED",
               completedAt: new Date().toISOString()
             } 
           : task

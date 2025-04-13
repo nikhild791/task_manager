@@ -53,12 +53,20 @@ const MainLayout = ({children}) => {
         }
     ];
     if(role ==='admin'){
-        navigationItems = [  {
+        navigationItems = [
+              {
             name: "Admin Dashboard",
             href: "/main/admin-dashboard",
             icon: List,
             active: location.pathname === "/main/admin-dashboard"
-        },...navigationItems]
+        },
+              {
+            name: "Users",
+            href: "/main/admin-dashboard/alluser",
+            icon: List,
+            active: location.pathname === "/main/admin-dashboard/alluser"
+        },
+        ...navigationItems]
     }else{
         navigationItems = [   
         {

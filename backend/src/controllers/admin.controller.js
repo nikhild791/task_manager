@@ -161,7 +161,6 @@ export async function createUser(req, res) {
       },
     });
 
-    // Return user details including password
     return res.status(201).json({
       success: true,
       msg: "User created successfully",
@@ -169,7 +168,8 @@ export async function createUser(req, res) {
         id: newUser.id,
         username: newUser.username,
         email: email || "No email provided",
-        password: randomPassword, // Return the password to admin
+        password: randomPassword,
+        createdAt:newUser.createdAt
       },
     });
   } catch (e) {
@@ -189,13 +189,7 @@ export async function showUser(req, res) {
   const users = await prisma.user.findMany({
     where: {
       adminId,
-    },
-    select: {
-      id: true,
-      username: true,
-      createdAt: true,
-      updatedAt: true,
-    },
+    }
   });
 
   return res.status(200).json({ success: true, msg: "all the users", users });

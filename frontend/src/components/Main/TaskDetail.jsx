@@ -60,7 +60,6 @@ const TaskDetails = () => {
   };
 
   const handleCompleteTask = (e) => {
-    console.log('here is stastus',e.target.value)
     if (!currentUser || !task) return;
     setIsSubmitting(true);
     

@@ -5,10 +5,22 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
-
+import {  useState } from "react";
+import {userService} from '../../api/admin.js'
+import {toast} from 'react-toastify'
+import { Plus } from "lucide-react";
+import PasswordForm from "../task/PasswordForm"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 const Profile = () => {
-  const { currentUser, logout } = useAuth();
+  const { currentUser, logout,role } = useAuth();
   const { tasks } = useTasks();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   if (!currentUser) return null;
   
@@ -16,10 +28,26 @@ const Profile = () => {
   const completedTasks = tasks.filter(task => task.status === "COMPLETED").length;
   const completionRate = totalTasks ? Math.round((completedTasks / totalTasks) * 100) : 0;
   
- 
+  const handlePasswordChange = async (formData) => {
+   
+    if (!currentUser && role==='user') return;
 
-  
-  
+    try {
+      const res = await userService.changePassword({
+        oldpassword: formData.oldpassword,
+        newpassword: formData.newpassword,
+      });
+
+      if (res.success) {
+        toast.success("Password updated successfully")
+      } else {
+        toast.error(res.msg || "Failed to create user");
+      }
+    } catch (error) {
+      toast.error("Cannot create user internal server error");
+      console.error(error);
+    } 
+  };
 
   const getInitials = (name) => {
     return name
@@ -46,8 +74,27 @@ const Profile = () => {
                 </Badge>
               </CardDescription>
             </CardHeader>
-            <CardContent className="text-center">
-              <p className="text-sm text-muted-foreground mb-4">{currentUser}</p>
+            <CardContent className="text-center flex flex-col gap-4">
+              <p className="text-sm  text-muted-foreground mb-4">{currentUser}</p>
+              {role==='user' && <Dialog  open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              Update Password
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            {(
+              <>
+                <DialogHeader>
+                  <DialogTitle>Update user password</DialogTitle>
+                </DialogHeader>
+                <PasswordForm
+                  onSubmit={handlePasswordChange}
+                />
+              </>
+            )}
+          </DialogContent>
+        </Dialog>}
               <Button 
                 variant="destructive" 
                 className="w-full" 
@@ -58,6 +105,7 @@ const Profile = () => {
               </Button>
             </CardContent>
           </Card>
+       
         </div>
         
         <div className="md:w-2/3">

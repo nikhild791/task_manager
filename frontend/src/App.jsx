@@ -21,6 +21,7 @@ import ChatBox from './components/Chat/ChatBox'
 import TaskDetails from './components/Main/TaskDetail'
 import Achievements from './components/Main/AchieveMent'
 import User from './components/Main/User'
+import AllUser from './components/Main/AllUser'
 
 
 function App() {
@@ -52,6 +53,8 @@ function App() {
     <Route path="/main/admin-dashboard"  element={<AdminRoute />}>
                   <Route index element={<AdminDashboard />} />
                   <Route path='/main/admin-dashboard/user' element={<User />} />
+                  
+                  <Route path='/main/admin-dashboard/alluser' element={<AllUser />} />
                   
                 </Route>
 
