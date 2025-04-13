@@ -2,6 +2,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import MainLayout from "../components/Main/MainLayout";
+import { ToastContainer } from 'react-toastify';
 
 const AdminRoute = () => {
   const { isAuthenticated, role, isLoading } = useAuth();
@@ -24,6 +25,7 @@ const AdminRoute = () => {
 
   return (
     <MainLayout>
+    <ToastContainer />
       <Outlet />
     </MainLayout>
   );

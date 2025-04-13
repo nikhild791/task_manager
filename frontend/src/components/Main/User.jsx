@@ -1,4 +1,4 @@
-import { toast } from "sonner";
+import { toast } from 'react-toastify'
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTasks } from "@/contexts/TaskContext";
@@ -15,11 +15,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Plus,  CheckCircle, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { XCircle } from "lucide-react";
+import { XCircle,ArrowLeft } from "lucide-react";
 import UserForm from "../task/UserForm";
 import { taskService } from "../../api/admin";
 
 const User = () => {
+  const navigate = useNavigate()
   const { currentUser } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -42,18 +43,17 @@ const User = () => {
  
   const handleCreateUser = async (formData) => {
     if (!currentUser) return;
-  
     setIsSubmitting(true);
     
     try {
       const res = await taskService.createUser({username:formData.username})
-      if(res.status){
-        // setTasks(prevTasks => [...prevTasks, taskData]);
-        toast.success("Task updated successfully");
+      if(res.success){
+        toast.success("User created successfully");
       }
       setIsDialogOpen(false);
     } catch (error) {
-      console.error("Error creating task:", error);
+      toast.error('Cannot create user internal server error')
+      console.log(error)
     } finally {
       setIsSubmitting(false);
     }
@@ -62,14 +62,15 @@ const User = () => {
 
   const changeUser = (e) => {
     const value = parseInt(e.target.value);
-    console.log('hi there',value)
     if(value ===0){
       setSelectedUser(0);
       setUserTask(tasks)
+      toast.info("all user successfully");
       return
     }
     setSelectedUser(value);
     const newTask = tasks.filter(task=>task.userId === value)
+    toast.info("User changed successfully");
     setUserTask(newTask)
   };
 
@@ -107,6 +108,15 @@ const User = () => {
     <div className="container mx-auto">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Users Dashboard</h1>
+        <div className="mb-6">
+        <Button className='cursor-pointer' onClick={()=>{navigate(-1)}} asChild variant="outline" size="sm">
+                <div>
+
+                      <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to dash board
+                </div>
+        </Button>
+      </div>
         <div>
       <label htmlFor="user-select">Select a user: </label>
       <select id="user-select" value={selectedUser?selectedUser:0} onChange={changeUser}>

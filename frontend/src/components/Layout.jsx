@@ -3,6 +3,8 @@ import Navbar from './Navbar'
 import Footer from './Footer'
 import { Outlet, useLocation } from 'react-router-dom'
 import PageTransition from './PageTransition'
+import { ToastContainer } from 'react-toastify';
+
 
 const Layout = () => {
   const location = useLocation();
@@ -14,6 +16,8 @@ const Layout = () => {
   return (
     <div className='min-h-screen bg-blue-50 dark:bg-gray-800 dark:text-white w-full flex flex-col'>
       <Navbar/>
+      <ToastContainer />
+
       <PageTransition>
         <Outlet/>
       </PageTransition>

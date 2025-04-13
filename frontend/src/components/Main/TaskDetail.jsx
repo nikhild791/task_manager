@@ -59,7 +59,8 @@ const TaskDetails = () => {
     }
   };
 
-  const handleCompleteTask = () => {
+  const handleCompleteTask = (e) => {
+    console.log('here is stastus',e.target.value)
     if (!currentUser || !task) return;
     setIsSubmitting(true);
     
@@ -72,7 +73,7 @@ const TaskDetails = () => {
         level: task.level,
         updatedAt: task.updatedAt,
         taskId : task.id,
-        status:'COMPLETED'
+        status:e.target.value
       });
       
       
@@ -128,11 +129,11 @@ const TaskDetails = () => {
   return (
     <div className="container mx-auto">
       <div className="mb-6">
-        <Button asChild variant="outline" size="sm">
-          <Link to="/dashboard">
-            <ArrowLeft className="h-4 w-4 mr-2" />
+        <Button className='cursor-pointer' onClick={()=>{navigate(-1)}} asChild variant="outline" size="sm">
+                <div>
+                      <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Tasks
-          </Link>
+                </div>
         </Button>
       </div>
       
@@ -151,15 +152,15 @@ const TaskDetails = () => {
             </div>
           </div>
           
-          {(isAdmin || task.userId ) && isTaskNotCompleted && (
+          {(isAdmin ) && (
             <div className="flex gap-2">
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogTrigger asChild>
+               { isTaskNotCompleted && <DialogTrigger asChild>
                   <Button variant="outline" size="sm" className='cursor-pointer'>
                     <Edit className="h-4 w-4 mr-2 " />
                     Edit
                   </Button>
-                </DialogTrigger>
+                </DialogTrigger>}
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle>Edit Task</DialogTitle>
@@ -172,12 +173,7 @@ const TaskDetails = () => {
                 </DialogContent>
               </Dialog>
               
-              {isTaskNotCompleted && (
-                <Button variant="default" size="sm" onClick={handleCompleteTask}>
-                  <Check className="h-4 w-4 mr-2" />
-                  Complete
-                </Button>
-              )}
+            
               
               { (
                 <Button variant="destructive" size="sm" onClick={handleDeleteTask}>
@@ -187,6 +183,19 @@ const TaskDetails = () => {
               )}
             </div>
           )}
+            {(
+              <div>
+
+                <label htmlFor="user-select">Status </label>
+                <select id="user-select" value={task.status} onChange={handleCompleteTask}>
+                  {['COMPLETED', 'WORKINPROGRESS', 'CANCELLED', 'PENDING'].map((status,index) => (
+                    <option key={index} value={status}>
+                      {status}
+                    </option>
+                          ))}
+                </select> 
+</div>
+              )}
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -234,7 +243,7 @@ const TaskDetails = () => {
                 <h3 className="text-sm font-semibold mb-1">Due Date</h3>
                 <div className="flex items-center">
                   <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
-                  <span>{task.updateAt}</span>
+                  <span>{formatDate(task.dueDate)}</span>
                 </div>
               </div>
               

@@ -1,10 +1,36 @@
 import { WebSocketServer } from 'ws';
+import { PrismaClient } from "@prisma/client";
+
+const prisma  = new PrismaClient()
 
 const wss = new WebSocketServer({ port: 8080 });
 
+export const messageRetrivel = async(req,res)=>{
+    const roomId = parseInt(req.params.roomId);
+    const response = await prisma.message.findMany({where:{
+        roomId
+    }})
+    if(response){
+    return    res.status(200).json({success:true,msg:"here all data",messages:response})
+    }
+    res.status(404).json({success:false,msg:"internal server error"})
+
+}
 
 let ChatRoom=[]
 
+async function savedChat(mx){
+    try{
+       await prisma.message.create({
+        data:
+        { message:mx.message, 
+        senderName: mx.senderName,
+        roomId :mx.roomId,
+        role : mx.role}})
+        }
+        catch(e){
+              console.log('error while saving message',e)  
+            }}
 
 
 wss.on('connection', function connection(ws) {
@@ -47,10 +73,11 @@ wss.on('connection', function connection(ws) {
             ws.send(JSON.stringify({type:'warning',message:'Enter roomId first'}))
             return
         }
+        savedChat(data)
        
         const allUsers = room.member.filter((a)=>a != ws)
         allUsers.map((socket)=>{
-            socket.send(JSON.stringify({type:'message',message:data}))
+            socket.send(JSON.stringify({type:'message',message:{...data,createdAt:new Date()}}))
 
         })
         
@@ -65,3 +92,4 @@ wss.on('connection', function connection(ws) {
   })
 
 });
+

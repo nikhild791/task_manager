@@ -13,7 +13,6 @@ export const ChatProvider = ({ children }) => {
   const [messages, setMessages] = useState([]);
   const [roomId,setRoomId] = useState()
 
-  // Step 1: Fetch adminId first
   useEffect(() => {
     const fetchAdminIdAndConnect = async () => {
       let res;
@@ -21,10 +20,14 @@ export const ChatProvider = ({ children }) => {
         res = await authService.adminProfile();
         setRoomId(res.admin.id)
         connectWebSocket(res.admin.id);
+        const data =await authService.getInitialMessage(res.admin.id)
+        setMessages(data.messages)
       } else {
         res = await userService.userProfile();
         setRoomId(res.user.adminId)
         connectWebSocket(res.user.adminId);
+        const data =await userService.getInitialMessage(res.user.adminId)
+        setMessages(data.messages)
       }
     };
 
@@ -36,7 +39,14 @@ export const ChatProvider = ({ children }) => {
       }
     };
   }, [role]);
-
+useEffect(()=>{
+  return () => {
+    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+      console.log('socket closed')
+      socketRef.current.close();
+    }
+  };
+},[])
   const connectWebSocket = (roomId) => {
     socketRef.current = new WebSocket('ws://localhost:8080');
 
@@ -74,7 +84,8 @@ export const ChatProvider = ({ children }) => {
             type: 'chat',
             roomId: roomId,
             message:text,
-            sender:currentUser
+            senderName:currentUser,
+            role:role
           })
         );
       } else {
@@ -85,8 +96,9 @@ export const ChatProvider = ({ children }) => {
       type: 'chat',
       id: Date.now().toString(),
       message: text.trim(),
-      sender: currentUser,
-      timestamp: new Date().toISOString()
+      senderName: currentUser,
+      role:role,
+      createdAt: new Date()
     };
 
     setMessages(prevMessages => [...prevMessages, newMessage]);

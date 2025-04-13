@@ -134,7 +134,7 @@ export async function deleteUser(req,res) {
 //@task kalesh
 export async function  createTask(req,res) {
     const adminId = req.adminId
-    const {title,description,status,priority,userId ,level} = req.body;
+    const {title,description,status,priority,userId,dueDate ,level} = req.body;
     const task = await prisma.task.findFirst({where:{
         title,
         adminId
@@ -150,9 +150,10 @@ export async function  createTask(req,res) {
                 description,
                 status,
                 level,
-               adminId,
-               priority,
-               userId:parseInt(userId)
+                adminId,
+                priority,
+                dueDate:new Date(dueDate),
+                userId:parseInt(userId)
             }
         })
         return res.status(201).json({success:true, msg:"task created successfully"})

@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { toast } from "sonner";
+import { toast } from "react-toastify";
 import { useAuth } from "./AuthContext";
 import { taskService, userService } from "../api/admin";
 
@@ -8,7 +8,7 @@ import { taskService, userService } from "../api/admin";
 const TaskContext = createContext();
 
 export const TaskProvider = ({ children }) => {
-  const { currentUser } = useAuth();
+  const { currentUser,role } = useAuth();
   const [tasks, setTasks] = useState([]);
 
   const getAllTask = async () => {
@@ -45,12 +45,17 @@ export const TaskProvider = ({ children }) => {
     const res = await taskService.addTask(taskData)
     if(res.success){
       setTasks(prevTasks => [...prevTasks, taskData]);
-      toast.success("Task updated successfully");
+      toast.success("Task added successfully");
     }
     };
 
   const updateTask =async (data) => {
-    const res = await taskService.updateTask(data)
+    let res 
+    if(role === 'admin'){
+      res = await taskService.updateTask(data)
+    }else{
+      res = await userService.updateTask(data)
+    }
     if(res.success){
       setTasks(prevTasks => 
         prevTasks.map(task => 
@@ -81,7 +86,6 @@ export const TaskProvider = ({ children }) => {
     if(res.success){
       setTasks(prevTasks => prevTasks.filter(task => task.id !== id));
       toast.success("Task deleted successfully");
-
     }
   };
 

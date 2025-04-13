@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { signup,signin,adminProfile,createUser,showUser,deleteUser,showTask,createTask,updateTask,deleteTask,assignTask,expelTask } from "../controllers/admin.controller.js";
 import { adminAuth } from "../middlewares/admin.middleware.js";
+import { messageRetrivel } from "../controllers/webSocket.controller.js";
 
 const adminRouter = Router();
 
@@ -19,6 +20,7 @@ adminRouter.route('/task/:taskId').delete(adminAuth,deleteTask)
 adminRouter.route('/task/assign').put(adminAuth,assignTask)
 adminRouter.route('/task/expel').put(adminAuth,expelTask)
 
+adminRouter.route('/message/:roomId').get(adminAuth,messageRetrivel)
 
 
 

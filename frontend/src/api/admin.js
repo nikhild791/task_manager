@@ -26,7 +26,10 @@ export const authService = {
     const response = await api.get('/admin');
     return response.data;
   },
-
+  getInitialMessage:async(data)=>{
+    const res = await api.get(`/admin/message/${data}`)
+    return res.data
+  }
 };
 
 export const taskService={
@@ -69,9 +72,17 @@ export const userService={
     const response = await api.get('/user')
     return response.data
   },
+  updateTask:async(data)=>{
+    const res = await api.get('/user/task',data)
+    return res.data
+  },
   showTask:async()=>{
     const response = await api.get('/user/task')
     return response.data
+  },
+  getInitialMessage:async(data)=>{
+    const res = await api.get(`/user/message/${data}`)
+    return res.data
   }
 }
 

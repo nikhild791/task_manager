@@ -1,29 +1,9 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { toast } from "sonner";
 import { authService, userService } from "../api/admin";
-
+import { toast } from "react-toastify";
 
 const AuthContext = createContext();
-// Mock user database
-const MOCK_USERS = [
-  {
-    id: "1",
-    name: "Admin User",
-    email: "admin@example.com",
-    password: "admin123",
-    role: "admin" ,
-    avatarUrl: "https://api.dicebear.com/7.x/personas/svg?seed=admin"
-  },
-  {
-    id: "2",
-    name: "Test User",
-    email: "user@example.com",
-    password: "user123",
-    role: "user",
-    avatarUrl: "https://api.dicebear.com/7.x/personas/svg?seed=user"
-  }
-];
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
@@ -58,10 +38,28 @@ export const AuthProvider = ({ children }) => {
       setRole(res.role)
       localStorage.setItem('user',res.admin.username)
       localStorage.setItem('role',res.role)
-      toast.success("Login successful!");
+      toast.success('admin logged in successfully', {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: false,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light"
+                    });
       
     } else {
-      toast.error("Invalid email or password");
+      toast.error('Invalid email or password', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light"
+              });
       throw new Error("Invalid email or password");
     }
     
@@ -76,9 +74,27 @@ export const AuthProvider = ({ children }) => {
       setRole(res.role)
       localStorage.setItem('user',res.user.username)
       localStorage.setItem('role',res.role)
-      toast.success("Login successful!");
+      toast.success('user logged in successfully', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light"
+              });
     } else {
-      toast.error("Invalid email or password");
+      toast.error('Invalid email or password', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light"
+              });
       throw new Error("Invalid email or password");
     }
     
@@ -92,11 +108,20 @@ export const AuthProvider = ({ children }) => {
       setRole(null)
       localStorage.removeItem('user')
       localStorage.removeItem('role')
-    toast.info("Logged out successfully");
+      toast.info('Logged out successfully', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light"
+              });
   };
 
   const isAuthenticated = !!currentUser;
-  const isAdmin = currentUser?.role === "admin";
+  const isAdmin = role === "admin";
 
   return (
     <AuthContext.Provider

@@ -15,6 +15,7 @@ import {
     Search
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
+import { ToastContainer } from 'react-toastify';
 
 const MainLayout = ({children}) => {
     const location = useLocation();
@@ -136,7 +137,7 @@ const MainLayout = ({children}) => {
                     </Sidebar>
                     
                     {/* Main Content Area */}
-                    <SidebarInset className="flex-1 flex flex-col absolute left-64 w-[calc(100%-256px)]">
+                    <SidebarInset className="flex-1 flex flex-col transition-all duration-200 ease-in-out peer-data-[state=expanded]:ml-64 peer-data-[state=collapsed]:ml-0">
                         {/* Header */}
                         <header className="h-16 px-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between bg-white dark:bg-gray-800">
                             <div className="flex items-center space-x-4">
@@ -158,6 +159,8 @@ const MainLayout = ({children}) => {
                                     <Settings className="h-5 w-5" />
                                 </Button>
                             </div>
+                            <ToastContainer />
+
                         </header>
                         
                         {/* Main Content */}

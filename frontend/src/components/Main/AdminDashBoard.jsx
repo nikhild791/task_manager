@@ -44,7 +44,7 @@ const AdminDashboard = () => {
         userId: formData.userId,
         priority: formData.priority,
         level:formData.level,
-        updatedAt: formData.dueDate,
+        dueDate: formData.dueDate,
         status:'PENDING'
       });
       

@@ -2,6 +2,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import MainLayout from "../components/Main/MainLayout";
+import { ToastContainer } from 'react-toastify';
 
 const ProtectedRoute = () => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -20,6 +21,8 @@ const ProtectedRoute = () => {
 
   return (
     <MainLayout>
+
+      <ToastContainer />
       <Outlet />
     </MainLayout>
   );
