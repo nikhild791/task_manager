@@ -34,6 +34,12 @@ const MainLayout = ({children}) => {
     let navigationItems = [
        
         {
+            name: "Calender",
+            href: "/main/calender",
+            icon: MessageSquare,
+            active: location.pathname === "/main/calender"
+        },
+        {
             name: "Chat",
             href: "/main/chat",
             icon: MessageSquare,

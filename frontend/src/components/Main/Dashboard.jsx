@@ -1,20 +1,16 @@
-import { useAuth } from "@/contexts/AuthContext";
 import { useTasks } from "@/contexts/TaskContext";
 import TaskCard from "../task/TaskCard";
 import { Button } from "@/components/ui/button";
 import { 
   Card, 
   CardContent, 
-  CardDescription, 
   CardHeader, 
   CardTitle 
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, User, CheckCircle, Clock } from "lucide-react";
-import { useEffect } from "react";
 
 const Dashboard = () => {
-  const { role } = useAuth();
   const { tasks } = useTasks();
   
   

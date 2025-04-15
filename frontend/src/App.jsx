@@ -22,7 +22,8 @@ import TaskDetails from './components/Main/TaskDetail'
 import Achievements from './components/Main/AchieveMent'
 import User from './components/Main/User'
 import AllUser from './components/Main/AllUser'
-
+import Calender from './components/Main/Calendar'
+import TaskCalendar from './components/Main/Calendar'
 
 function App() {
 
@@ -45,6 +46,7 @@ function App() {
     <Route path="/main" element={<ProtectedRoute/>} >
     <Route index element={<Dashboard/>} />
     <Route path='/main/dashboard' element={<Dashboard/>} />
+    <Route path='/main/calender' element={<TaskCalendar/>} />
     <Route path='/main/tasks/:taskId' element={<TaskDetails/>} />
     <Route path='/main/profile' element={<Profile/>} />
     <Route path='/main/chat' element={<ChatBox/>} />
@@ -53,7 +55,6 @@ function App() {
     <Route path="/main/admin-dashboard"  element={<AdminRoute />}>
                   <Route index element={<AdminDashboard />} />
                   <Route path='/main/admin-dashboard/user' element={<User />} />
-                  
                   <Route path='/main/admin-dashboard/alluser' element={<AllUser />} />
                   
                 </Route>
