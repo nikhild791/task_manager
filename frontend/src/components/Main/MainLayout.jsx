@@ -12,6 +12,7 @@ import {
     LogOut,
     Users,
     PanelLeft,
+    Settings,
     Search
 } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
@@ -152,7 +153,30 @@ const MainLayout = ({children}) => {
                     
                     {/* Main Content Area */}
                     <SidebarInset className="flex-1 flex flex-col transition-all duration-200 ease-in-out peer-data-[state=expanded]:ml-64 peer-data-[state=collapsed]:ml-0">
-                      
+                    <header className="h-16 px-6 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between bg-white dark:bg-gray-800">
+                             <div className="flex items-center space-x-4">
+                                 <SidebarTrigger className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200" />
+                                 <div className="relative">
+                                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                     <input
+                                         type="text"
+                                         placeholder="Search..."
+                                         className="pl-10 pr-4 py-2 rounded-md bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                     />
+                                 </div>
+                             </div>
+                             <div className="flex items-center space-x-4">
+                                 <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
+                                     <Bell className="h-5 w-5" />
+                                 </Button>
+                                 <Button variant="ghost" size="icon" className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
+                                     <Settings className="h-5 w-5" />
+                                 </Button>
+                             </div>
+                             <ToastContainer />
+ 
+                         </header>
+ 
                         
                         {/* Main Content */}
                         <main className="flex-1  p-6 overflow-auto bg-gray-50 dark:bg-gray-900">
