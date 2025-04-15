@@ -1,4 +1,3 @@
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -23,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import { taskService } from "../../api/admin";
 import { useState,useEffect } from "react";
+import { format } from "date-fns";
 
 
 const taskFormSchema = z.object({
@@ -45,26 +45,34 @@ const TaskForm = ({ onSubmit, initialData, isSubmitting }) => {
         } catch (err) {
           console.error('API Error:', err);
         } 
-
-  }
-  useEffect(() => {
-    getAllUsers()
-  }, [])
-  
+        
+      }
+      useEffect(() => {
+        getAllUsers()
+      }, [])
+      
 
   const { currentUser } = useAuth();
-  
   const form = useForm({
     resolver: zodResolver(taskFormSchema),
     defaultValues: {
       title: initialData?.title || "",
       description: initialData?.description || "",
-      userId: initialData?.userId || "",
+      userId: initialData?.assignedToId || "",
       priority: initialData?.priority || "MEDIUM",
       level: initialData?.level || "EASY",
-      dueDate: initialData?.dueDate || new Date().toISOString().split("T")[0],
+      dueDate: initialData?.dueDate ? format(new Date(initialData.dueDate), "yyyy-MM-dd") : "",
     },
   });
+
+  useEffect(() => {
+    if (users.length > 0 && initialData?.assignedToId) {
+      const user = users.find(user => user.id === initialData.assignedToId);
+      if (user) {
+        form.setValue('userId', user.id.toString());
+      }
+    }
+  }, [users, initialData?.assignedToId, form]);
 
   const handleSubmit = (values) => {
     if (!currentUser) return;
@@ -114,7 +122,7 @@ const TaskForm = ({ onSubmit, initialData, isSubmitting }) => {
                 <FormLabel>Assign To</FormLabel>
                 <Select 
                   onValueChange={field.onChange} 
-                  defaultValue={field.value}
+                  value={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -123,7 +131,7 @@ const TaskForm = ({ onSubmit, initialData, isSubmitting }) => {
                   </FormControl>
                   <SelectContent>
                     {users.map((user) => (
-                      <SelectItem key={user.id} value={user.id}>
+                      <SelectItem key={user.id} value={user.id.toString()}>
                         {user.username}
                       </SelectItem>
                     ))}

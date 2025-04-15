@@ -91,13 +91,13 @@ export async function updateTask(req,res){
         id:taskId
     },
     data:{
-        status
+        status,
+        completedAt:new Date()
     }        
 })
 res.status(200).json({success:true, msg:"task updated successfully"})
 
 }
-
 
 export async function allTask(req,res){
     const userId = req.userId
@@ -107,4 +107,22 @@ export async function allTask(req,res){
         }
     })
     return res.status(200).json({success:true, msg:"all the users",tasks})   
+}
+
+export async function getAdmin(req,res) {
+    const userId = req.userId
+    const user = await prisma.user.findFirst({where:{
+        id:userId
+    }})
+    if(user){
+        const userAdmin =await prisma.admin.findFirst({where:{
+            id:user.adminId
+        },
+        select:{
+            username:true
+        }
+    })
+    console.log(userAdmin)
+    res.status(200).json({success:true,msg:'user admin info',userAdmin})
+}
 }

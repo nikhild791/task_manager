@@ -241,7 +241,7 @@ export async function createTask(req, res) {
       .json({ success: false, msg: "task with this title already exists" });
   }
   try {
-    await prisma.task.create({
+    const task = await prisma.task.create({
       data: {
         title,
         description,
@@ -255,7 +255,7 @@ export async function createTask(req, res) {
     });
     return res
       .status(201)
-      .json({ success: true, msg: "task created successfully" });
+      .json({ success: true, msg: "task created successfully",task });
   } catch (e) {
     return res
       .status(511)
@@ -347,7 +347,7 @@ export async function assignTask(req, res) {
 
 export const updateTask = async (req, res) => {
   const adminId = req.adminId;
-  const { title, description, status, priority, userId, level, taskId } =
+  const { title, description, dueDate,completedAt,status, priority, userId, level, taskId } =
     req.body;
 
   if (!taskId) {
@@ -383,6 +383,8 @@ export const updateTask = async (req, res) => {
         level,
         adminId,
         priority,
+        dueDate:new Date(dueDate),
+        completedAt,
         userId: parseInt(userId),
       },
     });

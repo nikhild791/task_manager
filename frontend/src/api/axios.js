@@ -51,18 +51,18 @@ api.interceptors.response.use(
       message: error.message,
     });
 
-    // Handle auth errors
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      // Only redirect to login if not already trying to login
-      if (!originalRequest.url?.includes("/signin")) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        localStorage.removeItem("role");
+    // // Handle auth errors
+    // if (error.response?.status === 401 && !originalRequest._retry) {
+    //   // Only redirect to login if not already trying to login
+    //   if (!originalRequest.url?.includes("/signin")) {
+    //     localStorage.removeItem("token");
+    //     localStorage.removeItem("user");
+    //     localStorage.removeItem("role");
 
-        // Use window location for SPA navigation to login
-        window.location.href = "/signin";
-      }
-    }
+    //     // Use window location for SPA navigation to login
+    //     window.location.href = "/signin";
+    //   }
+    // }
 
     // Handle server errors
     if (error.response?.status >= 500) {

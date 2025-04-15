@@ -39,6 +39,7 @@ const Profile = () => {
       });
 
       if (res.success) {
+        setIsDialogOpen(false)
         toast.success("Password updated successfully")
       } else {
         toast.error(res.msg || "Failed to create user");

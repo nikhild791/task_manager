@@ -128,6 +128,10 @@ export const userService = {
     const response = await api.get("/user");
     return response.data;
   },
+  adminProfile: async()=>{
+    const response = await api.get('/user/admin')
+    return response.data
+  },
   updateTask: async (data) => {
     const res = await api.put("/user/task", data);
     return res.data;

@@ -8,6 +8,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [role,setRole] = useState()
+ 
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -32,7 +33,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (token) => {
     setIsLoading(true);
     if(token){
-       localStorage.setItem("token", `Bearer ${token}`);
+      localStorage.setItem("token", `Bearer ${token}`);
       const res = await authService.adminProfile()
       setCurrentUser(res.admin.username);
       setRole(res.role)
@@ -71,6 +72,7 @@ export const AuthProvider = ({ children }) => {
        localStorage.setItem("token", `Bearer ${token}`);
       const res = await userService.userProfile()
       setCurrentUser(res.user.username);
+      
       setRole(res.role)
       localStorage.setItem('user',res.user.username)
       localStorage.setItem('role',res.role)
@@ -120,8 +122,11 @@ export const AuthProvider = ({ children }) => {
               });
   };
 
+
   const isAuthenticated = !!currentUser;
   const isAdmin = role === "admin";
+
+
 
   return (
     <AuthContext.Provider

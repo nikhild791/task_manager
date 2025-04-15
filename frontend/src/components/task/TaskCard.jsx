@@ -3,12 +3,16 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Calendar,  Check } from "lucide-react";
+import { format } from "date-fns";
 
 const TaskCard = ({ task, onComplete }) => {
   const priorityColors = {
     LOW: "bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 border-green-300 dark:border-green-700",
     MEDIUM: "bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 border-yellow-300 dark:border-yellow-700",
     HIGH: "bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 border-red-300 dark:border-red-700"
+  };
+  const formatDate = (dateString) => {
+    return format(new Date(dateString), "PPP");
   };
 
   const statusColors = {
@@ -53,7 +57,7 @@ const TaskCard = ({ task, onComplete }) => {
       <div className="flex items-center justify-between">
         <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
           <Calendar className="h-4 w-4 mr-1" />
-          <span>Due: {(task.dueDate)}</span>
+          <span>Due: {formatDate(task.dueDate)}</span>
         </div>
         
         <div className="flex items-center space-x-2">

@@ -87,7 +87,7 @@ const MainLayout = ({children}) => {
                         <div className="flex flex-col h-full">
                             {/* Logo Section */}
                             <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-                                <Link to="/main/dashboard" className="flex items-center space-x-2">
+                                <Link to="/" className="flex items-center space-x-2">
                                     <div className="bg-gradient-to-br from-blue-600 to-indigo-600 dark:from-blue-500 dark:to-indigo-500 rounded-md w-8 h-8 flex items-center justify-center text-white font-bold shadow-sm">
                                         Pd
                                     </div>

@@ -44,7 +44,7 @@ export const TaskProvider = ({ children }) => {
     if (!currentUser) return;
     const res = await taskService.addTask(taskData)
     if(res.success){
-      setTasks(prevTasks => [...prevTasks, taskData]);
+      setTasks(prevTasks => [...prevTasks, res.task]);
       toast.success("Task added successfully");
     }
     };
@@ -65,6 +65,7 @@ export const TaskProvider = ({ children }) => {
       toast.success("Task updated successfully");
     }
   };
+
 
   const completeTask = (id) => {
     setTasks(prevTasks => 
