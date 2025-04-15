@@ -167,10 +167,10 @@ getAdmin()
   const isTaskNotCompleted = task.status !== "COMPLETED";
 
   return (
-    <div className="container mx-auto max-w-4xl px-4 py-8">
+    <div className="container mx-auto max-w-4xl px-4 ">
       <div className="mb-6">
         <Button 
-          className="text-muted-foreground hover:text-foreground transition-colors" 
+          className="text-muted-foreground shadow hover:text-foreground transition-colors" 
           onClick={() => navigate(-1)} 
           variant="ghost" 
           size="sm"
