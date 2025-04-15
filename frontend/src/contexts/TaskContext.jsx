@@ -1,53 +1,50 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useAuth } from "./AuthContext";
 import { taskService, userService } from "../api/admin";
 
-
 const TaskContext = createContext();
 
 export const TaskProvider = ({ children }) => {
-  const { currentUser,role } = useAuth();
+  const { currentUser, role } = useAuth();
   const [tasks, setTasks] = useState([]);
-
-  const getAllTask = async () => {
-    const role = localStorage.getItem('role'); 
-
-    try {
-      let res;
-      console.log(role,"role")
-      if (role === 'admin') {
-        res = await taskService.allTask(); 
-      } else if (role === 'user') {
-        res = await userService.showTask(); 
-
-      } else {
-        console.warn('No valid role found.');
-        return;
-      }
-
-      if (res.success) {
-        console.log('here is the',res)
-        setTasks(res.tasks);
-      }
-    } catch (err) {
-      console.error('API Error:', err);
-    }
-  };
-
-  useEffect(() => {
-    getAllTask()
-  }, []);
   
-  const addTask =async (taskData) => {
+  useEffect(() => {
+    
+      const getAllTask = async () => {
+        if (!role) return; 
+        
+        try {
+          let res;
+          if (role === 'admin') {
+            res = await taskService.allTask(); 
+          } else if (role === 'user') {
+            res = await userService.showTask(); 
+          } else {
+            console.warn('No valid role found.');
+            return;
+          }
+    
+          if (res.success) {
+            setTasks(res.tasks);
+          }
+        } catch (err) {
+          console.error('API Error:', err);
+        }
+      };
+    if (role && currentUser) {
+      getAllTask();
+    }
+  }, [role, currentUser]);
+
+  const addTask = async (taskData) => {
     if (!currentUser) return;
     const res = await taskService.addTask(taskData)
     if(res.success){
       setTasks(prevTasks => [...prevTasks, res.task]);
       toast.success("Task added successfully");
     }
-    };
+  };
 
   const updateTask =async (data) => {
     let res 

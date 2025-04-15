@@ -158,120 +158,120 @@ const User = () => {
           </Button>
           
           <div className="flex items-center gap-2">
-            <select
-              id="user-select"
-              value={selectedUser ? selectedUser : 0}
-              onChange={changeUser}
+          <select
+            id="user-select"
+            value={selectedUser ? selectedUser : 0}
+            onChange={changeUser}
               className="px-3 py-2 rounded-md border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
+          >
               <option value="" disabled>Select a user</option>
-              {users.map((user) => (
-                <option key={user.id} value={user.id}>
-                  {user.username}
-                </option>
-              ))}
-            </select>
+            {users.map((user) => (
+              <option key={user.id} value={user.id}>
+                {user.username}
+              </option>
+            ))}
+          </select>
             
-            <Button
-              variant="destructive"
-              size="sm"
+          <Button
+            variant="destructive"
+            size="sm"
               onClick={() => handleDeleteUser(selectedUser)}
               disabled={!selectedUser || selectedUser === 0}
               className="gap-2"
             >
               <XCircle className="h-4 w-4" />
               Delete User
-            </Button>
-          </div>
+          </Button>
+        </div>
           
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
               <Button className="gap-2">
                 <Plus className="h-4 w-4" />
-                Create User
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              {showCredentials && newUserDetails ? (
-                <>
-                  <DialogHeader>
-                    <DialogTitle>User Created Successfully</DialogTitle>
-                  </DialogHeader>
-                  <div className="mt-4 space-y-4">
+              Create User
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            {showCredentials && newUserDetails ? (
+              <>
+                <DialogHeader>
+                  <DialogTitle>User Created Successfully</DialogTitle>
+                </DialogHeader>
+                <div className="mt-4 space-y-4">
                     <div className="p-4 bg-emerald-50 rounded-lg border border-emerald-200">
                       <h3 className="font-medium text-lg mb-2 text-emerald-800">
-                        User Credentials
-                      </h3>
+                      User Credentials
+                    </h3>
 
                       <div className="space-y-3">
                         <div className="flex justify-between items-center p-2 bg-white rounded-md">
-                          <span className="font-medium">Username:</span>
+                        <span className="font-medium">Username:</span>
                           <div className="flex items-center gap-2">
                             <span className="font-mono">{newUserDetails.username}</span>
-                            <Button
-                              variant="ghost"
-                              size="sm"
+                          <Button
+                            variant="ghost"
+                            size="sm"
                               onClick={() => copyToClipboard(newUserDetails.username)}
-                            >
-                              <Copy className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-
-                        <div className="flex justify-between items-center p-2 bg-white rounded-md">
-                          <span className="font-medium">Email:</span>
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono">{newUserDetails.email || "Not provided"}</span>
-                            {newUserDetails.email && (
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => copyToClipboard(newUserDetails.email)}
-                              >
-                                <Copy className="h-4 w-4" />
-                              </Button>
-                            )}
-                          </div>
-                        </div>
-
-                        <div className="flex justify-between items-center p-2 bg-white rounded-md">
-                          <span className="font-medium">Password:</span>
-                          <div className="flex items-center gap-2">
-                            <span className="font-mono bg-gray-100 px-2 py-1 rounded">
-                              {newUserDetails.password}
-                            </span>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => copyToClipboard(newUserDetails.password)}
-                            >
-                              <Copy className="h-4 w-4" />
-                            </Button>
-                          </div>
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
                         </div>
                       </div>
 
-                      <p className="text-sm text-red-600 mt-4">
-                        Important: This is the only time you'll see this password.
-                        Make sure to save it or share it with the user now.
-                      </p>
+                        <div className="flex justify-between items-center p-2 bg-white rounded-md">
+                        <span className="font-medium">Email:</span>
+                          <div className="flex items-center gap-2">
+                            <span className="font-mono">{newUserDetails.email || "Not provided"}</span>
+                          {newUserDetails.email && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                                onClick={() => copyToClipboard(newUserDetails.email)}
+                            >
+                              <Copy className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+
+                        <div className="flex justify-between items-center p-2 bg-white rounded-md">
+                        <span className="font-medium">Password:</span>
+                          <div className="flex items-center gap-2">
+                          <span className="font-mono bg-gray-100 px-2 py-1 rounded">
+                            {newUserDetails.password}
+                          </span>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                              onClick={() => copyToClipboard(newUserDetails.password)}
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
                     </div>
 
-                    <Button className="w-full" onClick={closeCredentialsDialog}>
-                      Close
-                    </Button>
+                    <p className="text-sm text-red-600 mt-4">
+                      Important: This is the only time you'll see this password.
+                      Make sure to save it or share it with the user now.
+                    </p>
                   </div>
-                </>
-              ) : (
-                <>
-                  <DialogHeader>
-                    <DialogTitle>Create New User</DialogTitle>
-                  </DialogHeader>
+
+                  <Button className="w-full" onClick={closeCredentialsDialog}>
+                    Close
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <>
+                <DialogHeader>
+                  <DialogTitle>Create New User</DialogTitle>
+                </DialogHeader>
                   <UserForm onSubmit={handleCreateUser} isSubmitting={isSubmitting} />
-                </>
-              )}
-            </DialogContent>
-          </Dialog>
+              </>
+            )}
+          </DialogContent>
+        </Dialog>
         </div>
       </div>
 

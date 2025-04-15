@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 
 const UserFormSchema = z.object({
   username: z.string().min(3, "Username must be at least 3 characters"),
-  email: z.string().email("Please enter a valid email address").optional(),
+  email: z.string().email("Please enter a valid email address")
 });
 
 const UserForm = ({ onSubmit, isSubmitting }) => {
@@ -56,7 +56,7 @@ const UserForm = ({ onSubmit, isSubmitting }) => {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email (optional)</FormLabel>
+              <FormLabel>Email </FormLabel>
               <FormControl>
                 <Input
                   type="email"
